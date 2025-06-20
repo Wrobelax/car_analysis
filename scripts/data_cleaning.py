@@ -15,21 +15,21 @@ df = pd.read_csv(source, header = None)
 
 
 """Checking basic data structure"""
-# print(df.head()) # Missing data present
-# print(df.columns) # No headers
-# print(df.dtypes) # Object, Float and Int
-# print(df.info)
-# print(df.describe())
-# print(df['num-of-doors'].value_counts().idxmax()) # 4 doors is most common type.
+print(df.head()) # Missing data present
+print(df.columns) # No headers
+print(df.dtypes) # Object, Float and Int
+print(df.info)
+print(df.describe())
+print(df['num-of-doors'].value_counts().idxmax()) # 4 doors is most common type.
 
 
 # checking missing data.
 missing_data = df.isnull()
 
-# for column in missing_data.columns.values.tolist():
-    # print(column)
-    # print(missing_data[column].value_counts())
-    # print("")
+for column in missing_data.columns.values.tolist():
+    print(column)
+    print(missing_data[column].value_counts())
+    print("")
 
 
 
@@ -87,10 +87,24 @@ df[["price"]] = df[["price"]].astype("float")
 df[["peak-rpm"]] = df[["peak-rpm"]].astype("float")
 
 
+
+"""Data standardisation and normalization"""
+# Converting mpg to L/100km (235 divided by mpg).
+df["city-L/100km"] = 235 / df["city-mpg"]
+df["highway-mpg"] = 235 / df["highway-mpg"]
+
+df.rename(columns = {"highway-mpg" : "highway-L/100km"}, inplace = True)
+
+
+# Transforming length, width and height into similar range.
+df["length"] = df["length"] / df["length"].max()
+df["width"] = df["width"] / df["width"].max()
+df["height"] = df["height"] / df["height"].max()
+
+
 # Resetting index.
 df.reset_index(drop = True, inplace = True)
 
 
-
 """Saving corrected file"""
-df.to_csv("../data/auto_cleaned.csv", index = False)
+# df.to_csv("../data/auto_cleaned.csv", index = False) # Uncomment to generate file.
