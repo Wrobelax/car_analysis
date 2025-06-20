@@ -34,4 +34,5 @@ plt.pyplot.title("horsepower bins")
 # pyplot.savefig("../outputs/horsepower_grouping.png") # Saving plot to file.
 
 
-# 
+# Checking for correlations between bore, stroke, compression-ratio and horsepower.
+print(df[["bore", "stroke", "compression-ratio", "horsepower"]].corr())
