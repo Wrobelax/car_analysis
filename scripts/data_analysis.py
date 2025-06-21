@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.linear_model import LinearRegression
 
 
 # Importing file with cleaned data into dataframe.
@@ -119,3 +120,50 @@ plt.xticks(rotation = 90)
 fig.colorbar(im)
 # plt.savefig("../outputs/heatmap_corr_price.png") # Saving plot to file.
 plt.clf()
+
+
+# Linear regression for highway-L/100km and price.
+lm = LinearRegression()
+X = df[["highway-L/100km"]]
+Y = df["price"]
+lm.fit(X,Y)
+y_predict = lm.predict(X)
+
+sns.regplot(x = X, y = Y)
+plt.title("Linear regression for liter per 100km and price")
+plt.xlabel("L/100km")
+plt.ylabel("Price")
+
+# plt.savefig("../outputs/regplot_highway_price.png") # Saving plot to file.
+plt.clf()
+
+
+# Residual plot for highway-L/100km and price.
+plt.figure(figsize = (12, 10))
+sns.residplot(x = X, y = Y, color = 'darkred')
+plt.title("liter per 100km and price")
+plt.xlabel("L/100km")
+plt.ylabel("Price")
+
+# plt.savefig("../outputs/resid_highway_price.png") # Saving plot to file.
+plt.clf()
+
+
+# Visualising multiple linear regression for horsepower, curb-weight, engine-size, highway-L/100km and price.
+X1 = df[["horsepower", "curb-weight", "engine-size", "highway-L/100km"]]
+Y1 = df["price"]
+lm1 = LinearRegression()
+lm1.fit(X1, Y1)
+y_hat = lm1.predict(X1)
+
+plt.figure(figsize = (12,10))
+ax1 = sns.distplot(df["price"], hist = False, color = "r", label = "Actual value")
+sns.distplot(y_hat, hist = False, color = "b", label = "Fitted values", ax = ax1)
+plt.title("Actual vs fitted values for price")
+plt.xlabel("Price")
+plt.ylabel("Proportion of cars")
+
+# plt.savefig("../outputs/multi_lin_reg.png") # Saving plot to file.
+plt.show()
+plt.clf()
+
