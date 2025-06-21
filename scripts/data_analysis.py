@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 
 
 # Importing file with cleaned data into dataframe.
@@ -164,6 +165,56 @@ plt.xlabel("Price")
 plt.ylabel("Proportion of cars")
 
 # plt.savefig("../outputs/multi_lin_reg.png") # Saving plot to file.
-plt.show()
 plt.clf()
+
+
+# Visualising polynomial regression.
+X2 = df["highway-L/100km"]
+Y2 = df["price"]
+f = np.polyfit(X2, Y2, 3)
+p = np.poly1d(f)
+
+x_new = np.linspace(X2.min(), X2.max(), 100)
+y_new = p(x_new)
+
+plt.plot(X2, Y2, '.', x_new, y_new, '-')
+plt.title("Polynomial Fit with Matplotlib for Price ~ Gasoline consumption")
+ax = plt.gca()
+ax.set_facecolor((0.898, 0.898, 0.898))
+fig = plt.gcf()
+plt.xlabel("Gasoline consumption in litres/100km")
+plt.ylabel('Price of Cars')
+
+# plt.savefig("../outputs/poly_reg.png") # Saving plot to file.
+plt.clf()
+
+
+# Visualising polynomial regression of 11th degree (overfitting).
+X2 = df["highway-L/100km"]
+Y2 = df["price"]
+f = np.polyfit(X2, Y2, 11)
+p = np.poly1d(f)
+
+x_new = np.linspace(X2.min(), X2.max(), 100)
+y_new = p(x_new)
+
+plt.plot(X2, Y2, '.', x_new, y_new, '-')
+plt.title("Polynomial Fit with Matplotlib for Price ~ Gasoline consumption")
+ax = plt.gca()
+ax.set_facecolor((0.898, 0.898, 0.898))
+fig = plt.gcf()
+plt.xlabel("Gasoline consumption in litres/100km")
+plt.ylabel('Price of Cars')
+
+# plt.savefig("../outputs/poly_overfitted_reg.png") # Saving plot to file.
+plt.clf()
+
+
+
+"""Training and testing"""
+# Price.
+y_data = df["price"]
+x_data = df.drop("price", axis = 1)
+
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size = 0.2, random_state = 1)
 

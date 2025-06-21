@@ -6,7 +6,7 @@ This project is a data analysis of a publicly available data from:
 This project is a data analysis of a publicly available data from: 
 https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/Historical_Wildfires.csv
 
-The project consists of data analysis and data modeling of historical wildfires in Australia by using Pandas, Matplotlib and Numpy Python libraries. 
+The project consists of data analysis, data modeling training and testing of used car prices by using Pandas, Matplotlib, Seaborn, Scikit Learn and Numpy Python libraries. 
 All data was pushed and managed on Github via Git bash. The data did not require cleaning so this step was omitted.
 
 
