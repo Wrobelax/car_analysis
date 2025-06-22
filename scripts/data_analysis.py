@@ -10,6 +10,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge
+from tqdm import tqdm
 
 
 # Importing file with cleaned data into dataframe.
@@ -212,9 +215,61 @@ plt.clf()
 
 
 """Training and testing"""
-# Price.
+# Training, testing and visualising
 y_data = df["price"]
 x_data = df.drop("price", axis = 1)
 
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size = 0.2, random_state = 1)
 
+lr = LinearRegression()
+lr.fit(x_train[["horsepower", "curb-weight", "engine-size", "highway-L/100km"]],y_train)
+yhat_train = lr.predict(x_train[["horsepower", "curb-weight", "engine-size", "highway-L/100km"]])
+yhat_test = lr.predict(x_train[["horsepower", "curb-weight", "engine-size", "highway-L/100km"]])
+
+plt.figure(figsize = (12, 10))
+
+ax1 = sns.kdeplot(y_train, color = "r", label = "Actual values (train)")
+ax2 = sns.kdeplot(yhat_train, color="b", label = "Predicted values (train)", ax=ax1)
+
+plt.title("Distribution  Plot of  Predicted Value Using Training Data vs Training Data Distribution")
+plt.xlabel("Price")
+plt.ylabel("Proportion of Cars")
+
+# plt.savefig("../outputs/multiple_reg_train.png") # Saving plot to file.
+plt.clf()
+
+
+# Ridge regression plot.
+pr = PolynomialFeatures(degree = 2)
+x_train_pr = pr.fit_transform(x_train[["horsepower", "curb-weight", "engine-size", "highway-L/100km", "normalized-losses"]])
+x_test_pr = pr.fit_transform(x_test[["horsepower", "curb-weight", "engine-size", "highway-L/100km", "normalized-losses"]])
+
+RidgeModel = Ridge(alpha = 1)
+RidgeModel.fit(x_train_pr, y_train)
+yhat = RidgeModel.predict(x_test_pr)
+
+Rsqu_test = []
+Rsqu_train = []
+dummy = []
+Alpha = 10 * np.array(range(0, 1000))
+pbar = tqdm(Alpha)
+
+for alpha in pbar:
+    RidgeModel = Ridge(alpha = alpha)
+    RidgeModel.fit(x_train_pr, y_train)
+    test_score, train_score = RidgeModel.score(x_test_pr, y_test), RidgeModel.score(x_train_pr, y_train)
+
+    pbar.set_postfix({"Test Score": test_score, "Train Score": train_score})
+
+    Rsqu_test.append(test_score)
+    Rsqu_train.append(train_score)
+
+plt.figure(figsize = (12, 10))
+plt.plot(Alpha, Rsqu_test, label = "validation data ")
+plt.plot(Alpha, Rsqu_train, "r", label = "training data ")
+plt.xlabel("alpha")
+plt.ylabel("R^2")
+plt.legend()
+
+# plt.savefig("../outputs/ridge_reg.png") # Saving plot to file.
+plt.clf()
